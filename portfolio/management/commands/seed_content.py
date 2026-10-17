@@ -31,8 +31,12 @@ TEXTS = {
 }
 
 class Command(BaseCommand):
-    help = "Load the Itriel Consulting brochure content (verbatim from the PDF)."
+    help = "Load the Itriel Consulting brochure content."
+    def add_arguments(self, parser):
+        parser.add_argument("--force", action="store_true")
     def handle(self, *a, **k):
+        if Profile.objects.exists() and not k["force"]:
+            self.stdout.write("Contenu déjà présent, ignoré."); return
         for m in (Profile, SectionText, Service, MethodStep, Advantage, Plan, ComparisonRow, PriceItem):
             m.objects.all().delete()
         Profile.objects.create(
