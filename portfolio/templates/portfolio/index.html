@@ -1,168 +1,154 @@
-{% extends "portfolio/base.html" %}
+{% extends "portfolio/base.html" %}{% load static %}
 {% block content %}
 
-{# PAGE 1 — Accueil / contact #}
-<section id="accueil" class="page page-hero">
-  <div class="container-xl">
-    <div class="tagline reveal"><span class="rule"></span><span class="gem"></span><span class="rule"></span></div>
-    <p class="tagline-text">{{ p.tagline }}</p>
-    <h1 class="hero-q reveal">{{ p.hero_question }}</h1>
-    <div class="row align-items-center g-4 mt-2">
-      <div class="col-lg-7 reveal text-center">
-        <h2 class="hero-cta" id="typed" data-typed="{{ p.hero_cta }}">{{ p.hero_cta }}</h2>
-        <h3 class="hero-brand">{{ p.hero_brand }}</h3>
-        <p class="hero-sub">{{ p.hero_subtitle }}</p>
-        <p class="hero-services">{{ p.hero_services }}</p>
+<!-- ============ PAGE 1 — ACCUEIL ============ -->
+<div class="view cream" data-view="accueil">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <section id="accueil" class="pg container-xl">
+    <div class="hero">
+      <div class="hero-txt">
+        <h1>{{ p.hero_question }}</h1>
+        <h2 class="gold-h">{{ p.hero_cta }}</h2>
+        <p class="lead-s">{{ p.hero_subtitle }}</p>
       </div>
-      <div class="col-lg-5 reveal">
-        <div class="call-card d-flex align-items-center gap-3">
-          <span class="call-icon" aria-hidden="true"><i class="fa-solid fa-phone"></i></span>
-          <address class="mb-0">
-            <strong>{{ p.call_title }}</strong>
-            <strong>Téléphone : <a href="tel:{{ p.phone|cut:' ' }}">{{ p.phone }}</a></strong>
-            <strong>E-mail : <a href="mailto:{{ p.email }}">{{ p.email }}</a></strong>
-            <strong>Linkedin : <a href="https://{{ p.linkedin }}" target="_blank" rel="noopener">{{ p.linkedin }}</a></strong>
-          </address>
-        </div>
+      <img class="hero-photo" src="{% static 'images/ns/woman.jpg' %}" alt="Deux conseillères en rendez-vous" width="235" height="230">
+    </div>
+    <div class="cols2 intro">
+      <div class="rich">{{ t.accueil.body|safe }}</div>
+      <div class="rich">
+        {{ t.accueil.extra|safe }}
+        <div class="cta-box"><strong>{{ p.call_title }}</strong></div>
       </div>
     </div>
-  </div>
-</section>
-
-{# PAGE 2 — Présentation #}
-<section id="presentation" class="page">
-  <div class="container-xl">
-    <ul class="expertise reveal" role="list">
-      {% for e in p.expertise %}<li><i class="fa-solid fa-{{ e.icon }}" aria-hidden="true"></i><span>{{ e.label }}</span></li>{% endfor %}
+    <ul class="band list-unstyled">
+      {% for e in p.expertise %}<li><img src="{% static 'images/ns/' %}{{ e.icon }}" alt=""><span>{{ e.label }}</span></li>{% endfor %}
     </ul>
-    <div class="intro mx-auto">
-      <div class="intro-row reveal"><span class="ring"><i class="fa-regular fa-user"></i></span><p>{{ p.intro.0|safe }}</p></div>
-      <div class="intro-row reveal"><span class="ring"><i class="fa-regular fa-handshake"></i></span><p>{{ p.intro.1|safe }}</p></div>
-      <div class="intro-row hl reveal"><span class="disc"><i class="fa-solid fa-star"></i></span><p>{{ p.intro.2|safe }}</p></div>
-      <div class="intro-row white reveal"><span class="disc dark"><i class="fa-solid fa-shield-halved"></i></span><p>{{ p.intro.3|safe }}</p></div>
-    </div>
-  </div>
-</section>
+  </section>
+</div>
 
-{# PAGES 3 & 4 — Solutions #}
-{% for g in groups %}
-<section id="{{ g.id }}" class="page">
-  <div class="container-xl">
-    <h2 class="title reveal">{{ t.solutions.title }} <span class="gold">{{ t.solutions.subtitle }}</span></h2>
-    {% if g.first %}<p class="lead-text reveal">{{ t.solutions.body|safe }}</p>{% endif %}
-    <div class="row g-4 mt-1">
-      {% for s in g.services %}
-      <div class="col-md-6 col-lg-4 reveal">
-        <article class="card-s h-100">
-          <header><span class="num">{{ s.number }}</span><h3>{{ s.title }}</h3></header>
-          <hr class="gold-line">
-          <ul>{% for i in s.items %}<li>{{ i }}</li>{% endfor %}</ul>
-          <p class="goal"><i class="fa-solid fa-bullseye" aria-hidden="true"></i><span>{% if s.objective %}<strong>Notre objectif :</strong> {{ s.objective }}{% endif %}</span></p>
-        </article>
+<!-- ============ NOTRE ÉQUIPE (profil) ============ -->
+<div class="view white" data-view="equipe">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <section id="equipe" class="pg container-xl">
+    <div class="team">
+      <div class="team-txt">
+        <p class="kicker">{{ t.equipe.title }}</p>
+        <h2 class="team-h">{{ t.equipe.subtitle }}</h2>
+        <div class="team-body">{{ t.equipe.body|safe }}</div>
       </div>
-      {% endfor %}
+      <img class="team-photo" src="{% static 'images/ns/team.jpg' %}" alt="Belaid Nassima, Présidente d’ITRIEL" width="327" height="346">
     </div>
-    <p class="disclaimer reveal"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>{{ p.disclaimer|safe }}</span></p>
-  </div>
-</section>
-{% endfor %}
+    <div class="team-box">{{ t.equipe.extra|safe }}</div>
+  </section>
+</div>
 
-{# PAGE 5 — Méthode #}
-<section id="methode" class="page">
-  <div class="container-xl narrow">
-    <h2 class="title center reveal">{{ t.method.title }}</h2>
-    <h3 class="subtitle center reveal">{{ t.method.subtitle }}</h3>
-    <div class="gem-wrap reveal"><span class="gem"></span></div>
-    <p class="lead-text reveal">{{ t.method.body|safe }}</p>
-    <ol class="steps">
-      {% for s in steps %}<li class="reveal"><span class="step-n">{{ s.number }}</span><div><strong class="gold">{{ s.title }}</strong><span>{{ s.text }}</span></div></li>{% endfor %}
+<!-- ============ PAGE 2 — NOTRE MÉTHODE ============ -->
+<div class="view cream" data-view="methode">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <img class="sailboat" src="{% static 'images/ns/sailboat.png' %}" alt="">
+  <section id="methode" class="pg container-xl">
+    <header class="sec-head center">
+      <h2 class="h-navy os">{{ t.method.title }}</h2>
+      <p class="sub-gold os">{{ t.method.subtitle }}</p>
+      <p class="intro-p os">{{ t.method.body|safe }}</p>
+    </header>
+    <ol class="steps list-unstyled">
+      {% for s in steps %}<li>
+        <span class="pent"><img src="{% static 'images/ns/badge.png' %}" alt=""><b>{{ s.number }}</b></span>
+        <h3 class="os">{{ s.title }}</h3><p class="os">{{ s.text }}</p>
+      </li>{% endfor %}
     </ol>
-  </div>
-</section>
+  </section>
+</div>
 
-{# PAGE 6 — Engagement #}
-<section id="engagement" class="page">
-  <div class="container-xl narrow">
-    <h2 class="title center big reveal">{{ t.engagement.title }}</h2>
-    <h3 class="subtitle center sm reveal">{{ t.engagement.subtitle }}</h3>
-    <hr class="gold-line wide">
-    <h4 class="why reveal"><span class="gem"></span> {{ t.engagement.body }}</h4>
-    <ul class="checks">
-      {% for a in advantages %}<li class="reveal"><i class="fa-solid fa-check" aria-hidden="true"></i><span><strong>{{ a.title }}</strong> — {{ a.text }}</span></li>{% endfor %}
-    </ul>
-  </div>
-</section>
-
-{# PAGE 7 — Offres #}
-<section id="offres" class="page">
-  <div class="container-xl">
-    <div class="text-lg-end reveal"><h2 class="title">{{ t.offers.title }}</h2><p class="gold-soft">{{ t.offers.subtitle }}</p></div>
-    <h3 class="title center reveal mt-3">{{ t.offers.extra }}</h3>
-    <div class="gem-wrap wide reveal"><span class="rule"></span><span class="gem"></span><span class="rule"></span></div>
-    <p class="center fw-bold reveal">{{ t.offers.body }}</p>
-    <div class="row g-3 mt-1">
-      {% for pl in plans %}
-      <div class="col-lg-4 reveal">
-        <article class="plan plan-{{ forloop.counter }} h-100">
-          <header><span class="dot"></span><h4>{{ pl.name }}</h4><p>{{ pl.subtitle }}</p><hr class="gold-line short"><p>{{ pl.audience }}</p></header>
-          <div class="plan-body"><strong>Services :</strong><hr class="gold-line short left"><ul>{% for s in pl.services %}<li>{{ s }}</li>{% endfor %}</ul></div>
-        </article>
-      </div>
-      {% endfor %}
+<!-- ============ PAGES 3–4 — NOS SOLUTIONS ============ -->
+<div class="view cream" data-view="solutions">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <section id="solutions" class="pg container-xl">
+    <h2 class="h-navy-big">{{ t.solutions.title }} <span>{{ t.solutions.subtitle }}</span></h2>
+    <p class="intro-p narrow">{{ t.solutions.body|safe }}</p>
+    <div class="cards3">
+      {% for s in services %}
+      <article class="svc">
+        <header><span class="num">{{ s.number }}</span><h3>{{ s.title }}</h3></header>
+        <hr class="gline">
+        <ul>{% for i in s.items %}<li>{{ i }}</li>{% endfor %}</ul>
+        <div class="obj"><img src="{% static 'images/ns/target.png' %}" alt="">{% if s.objective %}<p><strong>Notre objectif :</strong> {{ s.objective }}</p>{% endif %}</div>
+      </article>{% endfor %}
     </div>
-  </div>
-</section>
+    <div class="disc"><img src="{% static 'images/ns/shield.png' %}" alt=""><p>{{ p.disclaimer|safe }}</p></div>
+  </section>
+</div>
 
-{# PAGE 8 — Formules (tableau) #}
-<section id="formules" class="page">
-  <div class="container-xl">
-    <h2 class="title center reveal">{{ t.formules.title }}</h2>
-    <h3 class="subtitle center reveal">{{ t.formules.subtitle }}</h3>
-    <div class="table-responsive reveal"><table class="table-i cmp">
-      <thead><tr><th scope="col"><span class="visually-hidden">Critère</span></th><th scope="col">ESSENTIEL</th><th scope="col">BUSINESS</th><th scope="col">PILOTAGE</th></tr></thead>
-      <tbody>{% for r in rows %}<tr><th scope="row">{{ r.label }}</th><td>{{ r.essentiel }}</td><td>{{ r.business }}</td><td>{{ r.pilotage }}</td></tr>{% endfor %}</tbody>
-    </table></div>
-    <div class="reco reveal"><strong>{{ t.formules.body }}</strong><p class="mb-0">{{ t.formules.extra }}</p></div>
-  </div>
-</section>
-
-{# PAGE 9 — Tarifs à la carte #}
-<section id="tarifs" class="page">
-  <div class="container-xl narrow-lg">
-    <h2 class="title center reveal">{{ t.carte.title }}</h2>
-    <div class="table-responsive reveal"><table class="table-i price">
-      <thead><tr><th scope="col">PRESTATION</th><th scope="col" class="text-center">TARIF INDICATIF</th></tr></thead>
-      <tbody>{% for i in carte %}<tr><td>{{ i.label }}</td><td class="text-center fw-bold">{{ i.price }}</td></tr>{% endfor %}</tbody>
-    </table></div>
-    <p class="note reveal">{{ t.carte.body }}</p>
-  </div>
-</section>
-
-{# PAGE 10 — Paie & RH #}
-<section id="paie" class="page">
-  <div class="container-xl narrow-lg">
-    <h2 class="title center reveal">{{ t.paie.title }}</h2>
-    <hr class="gold-line short mx-auto">
-    <div class="table-responsive reveal"><table class="table-i paie">
-      <thead><tr><th scope="col">PRESTATION</th><th scope="col">TARIF HT</th><th scope="col">COMPRIS</th></tr></thead>
-      <tbody>{% for i in paie %}<tr><th scope="row">{{ i.label }}</th><td class="fw-bold">{{ i.price }}</td><td>{{ i.included }}</td></tr>{% endfor %}</tbody>
-    </table></div>
-  </div>
-</section>
-
-{# Contact (formulaire AJAX) #}
-<section id="contact" class="page">
-  <div class="container-xl narrow-lg">
-    <h2 class="title center reveal">{{ p.hero_cta }}</h2>
-    <form id="contact-form" class="contact reveal" novalidate>{% csrf_token %}
-      <div class="row g-3">
-        <div class="col-md-6"><label for="c-name" class="form-label">Nom</label><input id="c-name" name="name" class="form-control" required autocomplete="name"><div class="invalid-feedback"></div></div>
-        <div class="col-md-6"><label for="c-email" class="form-label">E-mail</label><input id="c-email" type="email" name="email" class="form-control" required autocomplete="email"><div class="invalid-feedback"></div></div>
-        <div class="col-12"><label for="c-subject" class="form-label">Sujet</label><input id="c-subject" name="subject" class="form-control" required><div class="invalid-feedback"></div></div>
-        <div class="col-12"><label for="c-message" class="form-label">Message</label><textarea id="c-message" name="message" rows="4" class="form-control" required></textarea><div class="invalid-feedback"></div></div>
+<!-- ============ PAGE 5 — NOTRE ENGAGEMENT ============ -->
+<div class="view cream" data-view="engagement">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <section id="engagement" class="pg container-xl">
+    <div class="eng-top">
+      <div>
+        <h2 class="h-navy-big sm">{{ t.engagement.title }}</h2>
+        <p class="sub-brown">{{ t.engagement.subtitle }}</p>
       </div>
-      <button class="btn btn-gold mt-3" type="submit">Envoyer</button>
-    </form>
-  </div>
-</section>
+      <img class="couple" src="{% static 'images/ns/couple.png' %}" alt="Deux collaborateurs devant un ordinateur" width="242" height="299">
+    </div>
+    <div class="why">{{ t.engagement.body }}</div>
+    <div class="cols2 advs">
+      <ul class="list-unstyled">{% for a in adv_left %}<li><span class="chk"><img src="{% static 'images/ns/check.png' %}" alt=""></span><p>{{ a.title }} — {{ a.text }}</p></li>{% endfor %}</ul>
+      <ul class="list-unstyled">{% for a in adv_right %}<li><span class="chk"><img src="{% static 'images/ns/check.png' %}" alt=""></span><p>{{ a.title }} — {{ a.text }}</p></li>{% endfor %}</ul>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PAGES 6–7 — NOS FORMULES ============ -->
+<div class="view white" data-view="formules">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <section id="formules" class="pg container-xl">
+    <h2 class="h-mont">{{ t.offers.title }}</h2>
+    <div class="diamond"><i></i></div>
+    <p class="center-p">{{ t.offers.body }}</p>
+    <div class="plans">
+      {% for pl in plans %}
+      <article class="plan plan-{{ forloop.counter }}">
+        <header>
+          <img class="dot" src="{% static 'images/ns/' %}{{ pl.dot }}" alt="">
+          <h3>{{ pl.name }}</h3><p class="st">{{ pl.subtitle }}</p><hr class="sm"><p class="aud">{{ pl.audience }}</p>
+        </header>
+        <div class="pl-body"><h4>Services :</h4><hr class="gline short"><ul>{% for x in pl.services %}<li>{{ x }}</li>{% endfor %}</ul></div>
+      </article>{% endfor %}
+    </div>
+
+    <h2 class="h-gold-cap" id="comparatif">{{ t.formules.title }}</h2>
+    <div class="table-wrap">
+      <table class="cmp">
+        <thead><tr><th></th>{% for pl in plans %}<th>{{ pl.name|cut:" –" }}</th>{% endfor %}</tr></thead>
+        <tbody>{% for r in rows %}<tr><th scope="row">{{ r.label }}</th><td>{{ r.essentiel }}</td><td>{{ r.business }}</td><td>{{ r.pilotage }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <div class="reco"><strong>{{ t.formules.body }}</strong><span>{{ t.formules.extra }}</span></div>
+  </section>
+</div>
+
+<!-- ============ PAGES 8–9 — NOS TARIFS ============ -->
+<div class="view white" data-view="tarifs">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <section id="tarifs" class="pg container-xl">
+    <h2 class="h-mont-navy">{{ t.carte.title }}</h2>
+    <div class="table-wrap">
+      <table class="tar">
+        <thead><tr><th>PRESTATION</th><th class="r">TARIF INDICATIF</th></tr></thead>
+        <tbody>{% for i in carte %}<tr><td>{{ i.label }}</td><td class="r">{{ i.price }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <p class="note">{{ t.carte.body }}</p>
+  </section>
+  <section id="paie" class="pg container-xl">
+    <h2 class="h-mont-navy ls">{{ t.paie.title }}</h2><hr class="gline center-line">
+    <div class="table-wrap">
+      <table class="tar paie">
+        <thead><tr><th>PRESTATION</th><th>TARIF HT</th><th>COMPRIS</th></tr></thead>
+        <tbody>{% for i in paie %}<tr><th scope="row">{{ i.label }}</th><td>{{ i.price }}</td><td>{{ i.included }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+  </section>
+</div>
 {% endblock %}

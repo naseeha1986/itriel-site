@@ -1,80 +1,59 @@
-(function ($) {
+(function () {
   "use strict";
-  document.documentElement.classList.add("js");
   var root = document.documentElement;
+  root.classList.add("js");
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
 
-  /* ---- Theme toggle (persisted + system preference) ---- */
-  function setTheme(t, save) {
-    root.setAttribute("data-theme", t); root.setAttribute("data-bs-theme", t);
-    $("#theme-toggle").attr("aria-pressed", t === "dark");
-    if (save) { try { localStorage.setItem("theme", t); } catch (e) {} }
+  /* ---- Header gets a light shadow and shrinks once you scroll ---- */
+  var header = document.getElementById("site-header");
+  function onScroll() { header.classList.toggle("scrolled", window.scrollY > 30); }
+  window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  /* ---- Page switching: one "view" visible at a time, driven by the URL hash ----
+     #accueil (or no hash) = home; #methode, #solutions, #engagement, #formules, #tarifs open that page.
+     #paie / #comparatif scroll to that part of its page. Back/forward and shared links work. */
+  var views = $$(".view");
+  var navLinks = $$("#sidebar-nav .nav-link");
+  var navEl = document.getElementById("sidebar-nav");
+  var main = document.getElementById("main");
+  var current = null;
+
+  function route() {
+    var id = ""; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+    var target = id ? document.getElementById(id) : null;
+    if (id && target && !target.closest(".view")) return;            // e.g. the skip link (#main)
+    var view = (target && target.closest(".view")) || views[0];       // unknown hash -> home
+    var changed = view !== current;
+    if (changed) {
+      views.forEach(function (v) { v.classList.toggle("active", v === view); });
+      current = view;
+      var name = view.getAttribute("data-view");
+      navLinks.forEach(function (l) {
+        var on = l.getAttribute("data-view") === name;
+        l.classList.toggle("active", on);
+        if (on) l.setAttribute("aria-current", "page"); else l.removeAttribute("aria-current");
+      });
+      window.scrollTo({ top: 0, behavior: "instant" });
+      if (main) main.focus({ preventScroll: true });
+    }
+    if (target && target !== view.querySelector("section")) {
+      target.scrollIntoView({ behavior: reduceMotion || changed ? "instant" : "smooth", block: "start" });
+    } else if (!changed) {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    }
   }
-  setTheme(root.getAttribute("data-theme") || "light", false);
-  $("#theme-toggle").on("click", function () {
-    setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark", true);
+  window.addEventListener("hashchange", route);
+  route();
+
+  navLinks.forEach(function (l) {
+    l.addEventListener("click", function () {
+      var oc = window.bootstrap && bootstrap.Offcanvas.getInstance(navEl);
+      if (oc && navEl.classList.contains("show")) oc.hide();
+    });
   });
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
-    var saved = null; try { saved = localStorage.getItem("theme"); } catch (x) {}
-    if (!saved) setTheme(e.matches ? "dark" : "light", false);
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest && ev.target.closest('a[href^="#"]');
+    if (a && a.getAttribute("href") === location.hash) { ev.preventDefault(); route(); }
   });
-
-  /* ---- Sticky glass header ---- */
-  var $h = $("#site-header");
-  $(window).on("scroll", function () { $h.toggleClass("scrolled", window.scrollY > 30); }).trigger("scroll");
-
-  /* ---- Close offcanvas on link click ---- */
-  $("#sidebar-nav .nav-link").on("click", function () {
-    var el = document.getElementById("sidebar-nav"), oc = bootstrap.Offcanvas.getInstance(el);
-    if (oc) oc.hide();
-  });
-
-  /* ---- Reveal on scroll ---- */
-  var items = document.querySelectorAll(".reveal");
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    items.forEach(function (el, i) { el.style.transitionDelay = (i % 4) * 70 + "ms"; io.observe(el); });
-  } else { items.forEach(function (el) { el.classList.add("in"); }); }
-
-  /* ---- Typed headline (text is in the HTML for no-JS / screen readers) ---- */
-  var t = document.getElementById("typed");
-  if (t && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    var full = t.dataset.typed, i = 0;
-    t.setAttribute("aria-label", full); t.textContent = ""; t.classList.add("typing");
-    (function tick() {
-      t.textContent = full.slice(0, ++i);
-      if (i < full.length) setTimeout(tick, 70); else setTimeout(function () { t.classList.remove("typing"); }, 1800);
-    })();
-  }
-
-  /* ---- Toast ---- */
-  function toast(msg, err) {
-    var el = document.getElementById("toast");
-    el.classList.toggle("err", !!err); el.querySelector(".toast-body").textContent = msg;
-    bootstrap.Toast.getOrCreateInstance(el, { delay: 4500 }).show();
-  }
-
-  /* ---- AJAX contact form ---- */
-  $("#contact-form").on("submit", function (ev) {
-    ev.preventDefault();
-    var $f = $(this), $b = $f.find("button[type=submit]");
-    $f.find(".form-control").removeClass("is-invalid");
-    var data = {}; $f.serializeArray().forEach(function (x) { data[x.name] = x.value; });
-    $b.prop("disabled", true).text("Envoi…");
-    fetch("/contact/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-CSRFToken": data.csrfmiddlewaretoken },
-      body: JSON.stringify(data)
-    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-      .then(function (res) {
-        if (res.ok) { $f[0].reset(); toast("Message envoyé. Merci, nous revenons vers vous rapidement."); }
-        else {
-          $.each(res.j.errors || {}, function (k, m) { $f.find("[name=" + k + "]").addClass("is-invalid").next(".invalid-feedback").text(m); });
-          toast("Veuillez corriger les champs signalés.", true);
-        }
-      })
-      .catch(function () { toast("Erreur réseau. Réessayez.", true); })
-      .finally(function () { $b.prop("disabled", false).text("Envoyer"); });
-  });
-})(jQuery);
+})();
