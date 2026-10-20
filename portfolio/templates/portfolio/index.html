@@ -11,13 +11,15 @@
         <h2 class="gold-h">{{ p.hero_cta }}</h2>
         <p class="lead-s">{{ p.hero_subtitle }}</p>
       </div>
-      <img class="hero-photo" src="{% static 'images/ns/woman.jpg' %}" alt="Deux conseillères en rendez-vous" width="235" height="230">
+      <div class="hero-media">
+        <img class="hero-photo" src="{% static 'images/ns/woman.jpg' %}" alt="Deux conseillères en rendez-vous" width="235" height="230">
+      </div>
     </div>
     <div class="cols2 intro">
       <div class="rich">{{ t.accueil.body|safe }}</div>
       <div class="rich">
         {{ t.accueil.extra|safe }}
-        <div class="cta-box"><strong>{{ p.call_title }}</strong></div>
+        <a class="cta-box" href="mailto:{{ p.email }}?subject=Entretien%20gratuit%20de%2030%20minutes"><strong>{{ p.call_title }}</strong><span class="arr" aria-hidden="true">→</span></a>
       </div>
     </div>
     <ul class="band list-unstyled">
@@ -36,7 +38,10 @@
         <h2 class="team-h">{{ t.equipe.subtitle }}</h2>
         <div class="team-body">{{ t.equipe.body|safe }}</div>
       </div>
-      <img class="team-photo" src="{% static 'images/ns/team.jpg' %}" alt="Belaid Nassima, Présidente d’ITRIEL" width="327" height="346">
+      <div class="team-media">
+        <img class="team-photo" src="{% static 'images/ns/team.jpg' %}" alt="Belaid Nassima, Présidente d’ITRIEL" width="327" height="346">
+        <span class="exp-badge"><b>15</b> ans d’expérience</span>
+      </div>
     </div>
     <div class="team-box">{{ t.equipe.extra|safe }}</div>
   </section>
@@ -109,6 +114,7 @@
     <div class="plans">
       {% for pl in plans %}
       <article class="plan plan-{{ forloop.counter }}">
+        {% if forloop.counter == 2 %}<span class="ribbon">★ Notre formule recommandée</span>{% endif %}
         <header>
           <img class="dot" src="{% static 'images/ns/' %}{{ pl.dot }}" alt="">
           <h3>{{ pl.name }}</h3><p class="st">{{ pl.subtitle }}</p><hr class="sm"><p class="aud">{{ pl.audience }}</p>
@@ -148,6 +154,27 @@
         <thead><tr><th>PRESTATION</th><th>TARIF HT</th><th>COMPRIS</th></tr></thead>
         <tbody>{% for i in paie %}<tr><th scope="row">{{ i.label }}</th><td>{{ i.price }}</td><td>{{ i.included }}</td></tr>{% endfor %}</tbody>
       </table>
+    </div>
+  </section>
+</div>
+<!-- ============ CONTACT ============ -->
+<div class="view white" data-view="contact">
+  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
+  <section id="contact" class="pg container-xl">
+    <h2 class="h-mont-navy">Contact</h2><hr class="gline center-line">
+    <p class="center-p">{{ p.call_title }}</p>
+    <div class="contact-grid">
+      <form id="contact-form" class="c-form" method="post" action="{% url 'contact' %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="ts" value="{{ form_ts }}">
+        <div class="hp" aria-hidden="true"><label>Ne pas remplir <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <label>Nom<input type="text" name="name" required maxlength="100" autocomplete="name"></label>
+        <label>E-mail<input type="email" name="email" required autocomplete="email"></label>
+        <label>Objet<input type="text" name="subject" required maxlength="150"></label>
+        <label>Message<textarea name="message" rows="5" required></textarea></label>
+        <button type="submit" class="next-btn">Envoyer <span aria-hidden="true">→</span></button>
+        <p class="c-status" role="status" aria-live="polite">{% if sent %}Merci, votre message a bien été envoyé.{% endif %}</p>
+      </form>
     </div>
   </section>
 </div>

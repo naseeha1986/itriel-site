@@ -7,13 +7,39 @@
 
   /* ---- Header gets a light shadow and shrinks once you scroll ---- */
   var header = document.getElementById("site-header");
-  function onScroll() { header.classList.toggle("scrolled", window.scrollY > 30); }
-  window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  var fab = document.querySelector(".fab"), foot = document.querySelector(".site-footer");
+  function liftFab() {            // never cover the footer: rise above it when it scrolls into view
+    if (!fab || !foot) return;
+    var over = window.innerHeight - foot.getBoundingClientRect().top;
+    fab.style.bottom = (over > 0 ? over + 16 : 18) + "px";
+  }
+  window.addEventListener("scroll", liftFab, { passive: true });
+  window.addEventListener("resize", liftFab);
+  liftFab();
 
   /* ---- Page switching: one "view" visible at a time, driven by the URL hash ----
      #accueil (or no hash) = home; #methode, #solutions, #engagement, #formules, #tarifs open that page.
      #paie / #comparatif scroll to that part of its page. Back/forward and shared links work. */
   var views = $$(".view");
+  // "next page" button at the bottom of every page, built from the menu itself
+  var menu = $$("#sidebar-nav .nav-link");
+  views.forEach(function (v, i) {
+    var nxt = menu[i + 1], wrap = document.createElement("div");
+    wrap.className = "next-wrap";
+    wrap.innerHTML = nxt
+      ? '<a class="next-btn" href="#' + nxt.getAttribute("data-view") + '">' + nxt.textContent.trim() + ' <span aria-hidden="true">→</span></a>'
+      : '<a class="next-btn" href="#' + menu[0].getAttribute("data-view") + '"><span aria-hidden="true">↑</span> ' + menu[0].textContent.trim() + '</a>';
+    v.appendChild(wrap);
+  });
+  // gentle reveal-on-scroll for the main blocks
+  var rv = $$(".hero-txt,.intro .rich,.band,.steps li,.svc,.disc,.eng-top,.why,.advs li,.plan,.cmp,.reco,.tar,.team,.team-box,.note");
+  rv.forEach(function (el) { el.classList.add("rv"); });
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    rv.forEach(function (el, i) { el.style.transitionDelay = (i % 3) * 80 + "ms"; io.observe(el); });
+  } else { rv.forEach(function (el) { el.classList.add("in"); }); }
   var navLinks = $$("#sidebar-nav .nav-link");
   var navEl = document.getElementById("sidebar-nav");
   var main = document.getElementById("main");
@@ -43,8 +69,11 @@
       window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
     }
   }
-  window.addEventListener("hashchange", route);
+  window.addEventListener("hashchange", function () { route(); liftFab(); });
   route();
+  liftFab();
+  window.addEventListener("load", liftFab);
+  if ("ResizeObserver" in window) new ResizeObserver(liftFab).observe(document.body);
 
   navLinks.forEach(function (l) {
     l.addEventListener("click", function () {
@@ -55,5 +84,19 @@
   document.addEventListener("click", function (ev) {
     var a = ev.target.closest && ev.target.closest('a[href^="#"]');
     if (a && a.getAttribute("href") === location.hash) { ev.preventDefault(); route(); }
+  });
+
+  /* ---- Contact form: send without leaving the page ---- */
+  var form = document.getElementById("contact-form");
+  if (form) form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var st = form.querySelector(".c-status"), btn = form.querySelector("button");
+    if (!form.checkValidity()) { st.className = "c-status err"; st.textContent = "Veuillez remplir tous les champs avec une adresse e-mail valide."; return; }
+    btn.disabled = true; st.className = "c-status"; st.textContent = "Envoi en cours…";
+    fetch(form.action, { method: "POST", body: new FormData(form), headers: { "X-Requested-With": "XMLHttpRequest" } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { st.className = "c-status" + (d.ok ? "" : " err"); st.textContent = d.message; if (d.ok) form.reset(); })
+      .catch(function () { st.className = "c-status err"; st.textContent = "Une erreur est survenue. Merci de réessayer."; })
+      .then(function () { btn.disabled = false; });
   });
 })();
