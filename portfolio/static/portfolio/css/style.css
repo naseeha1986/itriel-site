@@ -278,23 +278,6 @@ table{border-collapse:collapse;width:100%}
 .next-btn:hover{background:var(--gold);color:var(--navy);transform:translateX(4px)}
 @media(prefers-reduced-motion:reduce){.hero-photo,.team-photo,.couple,.sailboat,.fab,.fab::after,.fab svg{animation:none!important}.js .rv{opacity:1;transform:none}}
 
-/* ---------- contact ---------- */
-.contact-grid{display:block;max-width:640px;margin:1.5rem auto 0}
-@media(max-width:767.98px){.contact-grid{grid-template-columns:1fr}}
-.c-info{margin:0;padding:0;display:grid;gap:1rem}
-.c-info li{display:flex;gap:1rem;align-items:center;background:#fff;border:1px solid #eee8e2;border-radius:14px;padding:1rem 1.2rem;box-shadow:0 2px 10px rgba(15,33,63,.06);transition:transform .25s,box-shadow .25s}
-.c-info li:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(15,33,63,.12)}
-.c-ic{flex:none;width:44px;height:44px;border-radius:50%;background:var(--navy);color:var(--gold-lt);display:grid;place-items:center;font-weight:700}
-.c-info b{display:block;font-family:var(--ff-m);font-size:.78rem;color:var(--gold-dk);letter-spacing:.04em}
-.c-info a{font-family:var(--ff-m);font-weight:600;color:var(--navy-2);word-break:break-all}
-.c-form{display:grid;gap:.9rem;background:var(--cream);border:1px solid #eadfc9;border-radius:18px;padding:1.4rem}
-.c-form label{display:grid;gap:.3rem;font-family:var(--ff-m);font-size:.8rem;font-weight:600;color:var(--navy-2)}
-.c-form input,.c-form textarea{font:inherit;font-weight:400;padding:.65rem .8rem;border:1.5px solid #d9cfba;border-radius:10px;background:#fff;color:var(--navy-2)}
-.c-form input:focus,.c-form textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,165,105,.3)}
-.c-form button{justify-self:start;cursor:pointer}
-.c-status{margin:0;font-family:var(--ff-m);font-size:.85rem;font-weight:600;color:#2b7a4b}.c-status.err{color:#b3261e}
-.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-
 /* ---------- footer ---------- */
 .site-footer{background:var(--navy);color:#dfe6f3;font-family:var(--ff-m);font-size:.78rem;padding:1rem 0;position:relative;z-index:2}
 .site-footer .container-xl{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.5rem}

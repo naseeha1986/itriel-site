@@ -157,25 +157,4 @@
     </div>
   </section>
 </div>
-<!-- ============ CONTACT ============ -->
-<div class="view white" data-view="contact">
-  <img class="orn-side" src="{% static 'images/ns/orn-side.png' %}" alt="">
-  <section id="contact" class="pg container-xl">
-    <h2 class="h-mont-navy">Contact</h2><hr class="gline center-line">
-    <p class="center-p">{{ p.call_title }}</p>
-    <div class="contact-grid">
-      <form id="contact-form" class="c-form" method="post" action="{% url 'contact' %}" novalidate>
-        {% csrf_token %}
-        <input type="hidden" name="ts" value="{{ form_ts }}">
-        <div class="hp" aria-hidden="true"><label>Ne pas remplir <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-        <label>Nom<input type="text" name="name" required maxlength="100" autocomplete="name"></label>
-        <label>E-mail<input type="email" name="email" required autocomplete="email"></label>
-        <label>Objet<input type="text" name="subject" required maxlength="150"></label>
-        <label>Message<textarea name="message" rows="5" required></textarea></label>
-        <button type="submit" class="next-btn">Envoyer <span aria-hidden="true">→</span></button>
-        <p class="c-status" role="status" aria-live="polite">{% if sent %}Merci, votre message a bien été envoyé.{% endif %}</p>
-      </form>
-    </div>
-  </section>
-</div>
 {% endblock %}

@@ -86,17 +86,4 @@
     if (a && a.getAttribute("href") === location.hash) { ev.preventDefault(); route(); }
   });
 
-  /* ---- Contact form: send without leaving the page ---- */
-  var form = document.getElementById("contact-form");
-  if (form) form.addEventListener("submit", function (ev) {
-    ev.preventDefault();
-    var st = form.querySelector(".c-status"), btn = form.querySelector("button");
-    if (!form.checkValidity()) { st.className = "c-status err"; st.textContent = "Veuillez remplir tous les champs avec une adresse e-mail valide."; return; }
-    btn.disabled = true; st.className = "c-status"; st.textContent = "Envoi en cours…";
-    fetch(form.action, { method: "POST", body: new FormData(form), headers: { "X-Requested-With": "XMLHttpRequest" } })
-      .then(function (r) { return r.json(); })
-      .then(function (d) { st.className = "c-status" + (d.ok ? "" : " err"); st.textContent = d.message; if (d.ok) form.reset(); })
-      .catch(function () { st.className = "c-status err"; st.textContent = "Une erreur est survenue. Merci de réessayer."; })
-      .then(function () { btn.disabled = false; });
-  });
 })();
